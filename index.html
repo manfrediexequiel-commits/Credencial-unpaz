@@ -248,7 +248,7 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 const img = document.createElement('img');
-                img.src = e.target.result;
+                src = e.target.result;
                 const wrap = document.getElementById('photoWrap');
                 wrap.innerHTML = ''; // Limpia el texto "SUBIR FOTO"
                 wrap.appendChild(img);
