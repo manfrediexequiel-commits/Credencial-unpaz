@@ -3,91 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Credencial UNPAZ</title>
+    <title>Generador de Credencial UNPAZ (Estudiante)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
-            --unpaz-blue: #002350;
-            --unpaz-light-blue: #004a99;
-        }
-        body { font-family: 'Segoe UI', Arial, sans-serif; display: flex; flex-direction: column; align-items: center; background-color: #1a1a1a; color: white; padding: 20px; }
-        
-        .form-container { background: #fff; color: #333; padding: 20px; border-radius: 15px; width: 350px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        input { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: var(--unpaz-blue); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        
-        /* DISEÑO MEJORADO DE LA CREDENCIAL */
-        #credential {
-            width: 350px; height: 550px;
-            background: linear-gradient(145deg, #001a3d, #003366);
-            border-radius: 20px; position: relative;
-            overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            --unpaz-blue: #002350; /* Azul principal */
+            --light-bg: #f4f6f9;
+            --card-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
 
-        .header { background: white; padding: 15px; text-align: center; height: 70px; display: flex; align-items: center; justify-content: center; }
-        /* El logo se inserta como imagen */
-        .header img { height: 55px; width: auto; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #1a1a1a; /* Fondo oscuro para el visor de la app */
+            color: #fff;
+            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+        }
 
+        /* Panel de entrada de datos (Móvil-Friendly) */
+        .form-container {
+            background: #fff;
+            color: #333;
+            padding: 20px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 360px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .form-container h3 { margin-top: 0; color: var(--unpaz-blue); }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(145deg, var(--unpaz-blue), #003a80);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: transform 0.1s;
+        }
+
+        button:active { transform: scale(0.98); }
+
+        /* DISEÑO DE LA CREDENCIAL (Simulando la imagen moderna) */
+        /* Contenedor principal con sombra y bordes redondeados */
+        .card-frame {
+            padding: 10px;
+            background: rgba(255,255,255,0.05); /* Sutil marco */
+            border-radius: 25px;
+        }
+
+        .card {
+            width: 350px;
+            height: 550px; /* Altura más estilizada */
+            background-color: #fff; /* Fondo blanco central */
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* Encabezado con el Logo de UNPAZ (Subido a GitHub) */
+        .header {
+            width: 100%;
+            height: 90px;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            box-sizing: border-box;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* USANDO EL LOGO DESDE GITHUB */
+        .header img {
+            max-height: 70px;
+            max-width: 85%;
+            width: auto;
+            height: auto;
+        }
+
+        /* Franja azul con el título de la carrera */
         .career-title {
-            background: rgba(255,255,255,0.1);
-            color: #fff; padding: 15px; text-align: center;
-            font-size: 1.1em; font-weight: bold;
-            border-top: 1px solid rgba(255,255,255,0.2);
-            border-bottom: 1px solid rgba(255,255,255,0.2);
+            width: 100%;
+            background-color: var(--unpaz-blue);
+            color: #fff;
+            padding: 15px 10px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-sizing: border-box;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
+        /* Contenedor central de la foto y nombre */
         .main-content {
-            background: white; margin: 20px; padding: 20px;
-            border-radius: 15px; color: #333; text-align: center;
-            height: 320px; display: flex; flex-direction: column; align-items: center;
+            flex-grow: 1;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
+        /* Espacio para la foto de perfil */
         .photo-box {
-            width: 120px; height: 140px; background: #f0f0f0;
-            border: 2px solid var(--unpaz-blue); border-radius: 10px;
-            margin-bottom: 15px; overflow: hidden;
-            display: flex; align-items: center; justify-content: center;
+            width: 140px;
+            height: 180px;
+            background: #f0f0f0;
+            border: 3px solid var(--unpaz-blue);
+            border-radius: 12px;
+            margin-bottom: 25px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-        .photo-box img { width: 100%; height: 100%; object-fit: cover; }
 
-        .info h2 { font-size: 1.2em; margin: 5px 0; color: #001a3d; text-transform: uppercase; }
-        .info p { margin: 2px 0; font-size: 0.9em; color: #666; }
+        .photo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
+        /* Información del estudiante (Solo Nombre) */
+        .info {
+            text-align: center;
+            width: 100%;
+        }
+
+        .info h2 {
+            font-size: 1.6rem;
+            margin: 0;
+            color: #1a1a1a;
+            font-weight: 800;
+            text-transform: uppercase;
+            word-wrap: break-word; /* Maneja nombres largos */
+        }
+
+        /* Etiqueta inferior de "Estudiante" */
         .tag-estudiante {
-            margin-top: auto; font-size: 1.5em; font-weight: 900;
-            color: var(--unpaz-blue); letter-spacing: 3px;
+            width: 100%;
+            background-color: #f8f9fa;
+            padding: 20px 0;
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--unpaz-blue);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            border-top: 1px solid #eee;
+            margin-top: auto;
         }
+
+        /* Ajustes para la captura (html2canvas) */
+        #credential {
+            transform: scale(1); /* Asegura escala normal para captura */
+        }
+
     </style>
 </head>
 <body>
 
     <div class="form-container">
-        <h3>Generador de Credencial</h3>
-        <input type="text" id="inNombre" placeholder="Nombre Completo" oninput="update()">
-        <input type="text" id="inDni" placeholder="DNI" oninput="update()">
-        <input type="text" id="inLegajo" placeholder="Legajo" oninput="update()">
-        <input type="file" accept="image/*" onchange="loadPhoto(event)">
-        <button onclick="download()">Descargar Credencial</button>
+        <h3>Generar Credencial Estudiante</h3>
+        <input type="text" id="inNombre" placeholder="Apellidos y Nombres" oninput="updateCard()">
+        <p style="font-size: 14px; color: #666; margin-bottom: 5px;">Sube tu foto de perfil (JPG/PNG):</p>
+        <input type="file" accept="image/*" id="fileInput" onchange="loadFile(event)">
+        
+        <button onclick="downloadCard()">Descargar Credencial</button>
     </div>
 
-    <div id="credential">
-        <div class="header">
-            <img src="https://unpaz.edu.ar/sites/default/files/unpaz_logo_0.png" crossorigin="anonymous" id="logoUnpaz">
-        </div>
-        
-        <div class="career-title">
-            Licenciatura en Enfermería (DCSyD)
-        </div>
-
-        <div class="main-content">
-            <div class="photo-box" id="photoWrap">
-                <span style="color: #ccc; font-size: 10px;">FOTO</span>
-            </div>
+    <div class="card-frame">
+        <div class="card" id="credential">
+            <div class="header">
+                <img src="img/logo_unpaz.png" alt="Logo UNPAZ" id="logoUnpaz"> </div>
             
-            <div class="info">
-                <h2 id="outNombre">NOMBRE APELLIDO</h2>
+            <div class="career-title">
+                Licenciatura en Enfermería (DCSyD)
+            </div>
+
+            <div class="main-content">
+                <div class="photo-box" id="photoWrap">
+                    <span style="color: #adb5bd; font-size: 12px; font-weight: bold;">SUBIR FOTO</span>
+                </div>
                 
+                <div class="info">
+                    <h2 id="dispNombre">APELLIDOS Y NOMBRES</h2>
+                </div>
             </div>
 
             <div class="tag-estudiante">ESTUDIANTE</div>
@@ -95,36 +234,49 @@
     </div>
 
     <script>
-        function update() {
-            document.getElementById('outNombre').innerText = document.getElementById('inNombre').value || "NOMBRE APELLIDO";
-            
+        // Actualiza el nombre en tiempo real
+        function updateCard() {
+            const inputNombre = document.getElementById('inNombre').value;
+            document.getElementById('dispNombre').innerText = inputNombre.toUpperCase() || "APELLIDOS Y NOMBRES";
         }
 
-        function loadPhoto(event) {
+        // Carga la foto de perfil local
+        function loadFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
             const reader = new FileReader();
-            reader.onload = function() {
+            reader.onload = function(e) {
                 const img = document.createElement('img');
-                img.src = reader.result;
+                img.src = e.target.result;
                 const wrap = document.getElementById('photoWrap');
-                wrap.innerHTML = '';
+                wrap.innerHTML = ''; // Limpia el texto "SUBIR FOTO"
                 wrap.appendChild(img);
-            }
-            reader.readAsDataURL(event.target.files[0]);
+            };
+            reader.readAsDataURL(file);
         }
 
-        async function download() {
-            const card = document.getElementById('credential');
-            // Nota: Para que el logo cargue en el canvas desde GitHub, 
-            // html2canvas necesita permiso. He añadido 'crossorigin' a la imagen.
-            html2canvas(card, {
-                useCORS: true,
-                allowTaint: true,
-                backgroundColor: null,
-                scale: 2
-            }).then(canvas => {
+        // Descarga la credencial como imagen PNG
+        function downloadCard() {
+            const element = document.getElementById('credential');
+            
+            // Opciones de configuración para una captura de alta calidad
+            const options = {
+                scale: 3, // Multiplica la resolución (calidad de impresión)
+                useCORS: true, // Permite cargar imágenes externas (como el logo de GitHub si se usara URL completa)
+                backgroundColor: null, // Fondo transparente alrededor de la tarjeta si tiene bordes redondeados
+                logging: false, // Desactiva logs en consola
+                onclone: (clonedDoc) => {
+                    // Asegura que el clon para captura tenga el tamaño correcto
+                    const clonedCard = clonedDoc.getElementById('credential');
+                    clonedCard.style.transform = 'none';
+                }
+            };
+
+            html2canvas(element, options).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'Credencial-UNPAZ.png';
-                link.href = canvas.toDataURL();
+                link.download = 'Credencial-UNPAZ-Estudiante.png';
+                link.href = canvas.toDataURL('image/png');
                 link.click();
             });
         }
