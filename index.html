@@ -4,64 +4,132 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generador de Credencial UNPAZ</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; background-color: #f0f2f5; }
-        .form-container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin: 20px; width: 350px; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        :root {
+            --unpaz-blue: #002350;
+            --unpaz-light-blue: #004a99;
+        }
+        body { font-family: 'Segoe UI', Arial, sans-serif; display: flex; flex-direction: column; align-items: center; background-color: #1a1a1a; color: white; padding: 20px; }
         
-        /* Diseño de la Credencial */
-        .card { width: 350px; height: 500px; background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.2); position: relative; border: 1px solid #ddd; }
-        .header { background: white; padding: 15px; text-align: center; }
-        .header img { width: 180px; }
-        .career-banner { background: #002350; color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 1.1em; }
-        .photo-space { width: 120px; height: 150px; background: #eee; margin: 20px auto; border: 2px solid #002350; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .photo-space img { width: 100%; height: 100%; object-fit: cover; }
-        .info { text-align: center; padding: 10px; }
-        .info h2 { margin: 5px 0; color: #333; font-size: 1.2em; }
-        .info p { margin: 2px 0; color: #666; font-size: 0.9em; }
-        .footer-tag { position: absolute; bottom: 20px; width: 100%; text-align: center; font-weight: bold; font-size: 1.5em; color: #333; }
+        .form-container { background: #fff; color: #333; padding: 20px; border-radius: 15px; width: 350px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        input { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: var(--unpaz-blue); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        
+        /* DISEÑO MEJORADO DE LA CREDENCIAL */
+        #credential {
+            width: 350px; height: 550px;
+            background: linear-gradient(145deg, #001a3d, #003366);
+            border-radius: 20px; position: relative;
+            overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+
+        .header { background: white; padding: 15px; text-align: center; height: 70px; display: flex; align-items: center; justify-content: center; }
+        /* El logo se inserta como imagen */
+        .header img { height: 55px; width: auto; }
+
+        .career-title {
+            background: rgba(255,255,255,0.1);
+            color: #fff; padding: 15px; text-align: center;
+            font-size: 1.1em; font-weight: bold;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .main-content {
+            background: white; margin: 20px; padding: 20px;
+            border-radius: 15px; color: #333; text-align: center;
+            height: 320px; display: flex; flex-direction: column; align-items: center;
+        }
+
+        .photo-box {
+            width: 120px; height: 140px; background: #f0f0f0;
+            border: 2px solid var(--unpaz-blue); border-radius: 10px;
+            margin-bottom: 15px; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        .info h2 { font-size: 1.2em; margin: 5px 0; color: #001a3d; text-transform: uppercase; }
+        .info p { margin: 2px 0; font-size: 0.9em; color: #666; }
+
+        .tag-estudiante {
+            margin-top: auto; font-size: 1.5em; font-weight: 900;
+            color: var(--unpaz-blue); letter-spacing: 3px;
+        }
     </style>
 </head>
 <body>
 
     <div class="form-container">
-        <h3>Datos de la Credencial</h3>
-        <input type="text" id="inNombre" placeholder="Nombre y Apellido" oninput="updateCard()">
-        <input type="text" id="inDni" placeholder="DNI" oninput="updateCard()">
-        <input type="text" id="inLegajo" placeholder="Legajo" oninput="updateCard()">
-        <p style="font-size: 12px; color: gray;">Sube tu foto:</p>
-        <input type="file" accept="image/*" onchange="loadFile(event)">
+        <h3>Generador de Credencial</h3>
+        <input type="text" id="inNombre" placeholder="Nombre Completo" oninput="update()">
+        <input type="text" id="inDni" placeholder="DNI" oninput="update()">
+        <input type="text" id="inLegajo" placeholder="Legajo" oninput="update()">
+        <input type="file" accept="image/*" onchange="loadPhoto(event)">
+        <button onclick="download()">Descargar Credencial</button>
     </div>
 
-    <div class="card" id="credential">
+    <div id="credential">
         <div class="header">
-            <img src="https://unpaz.edu.ar/sites/default/files/unpaz_logo_0.png" alt="UNPAZ">
+            <img src="https://unpaz.edu.ar/sites/default/files/unpaz_logo_0.png" crossorigin="anonymous" id="logoUnpaz">
         </div>
-        <div class="career-banner">
+        
+        <div class="career-title">
             Licenciatura en Enfermería (DCSyD)
         </div>
-        <div class="photo-space" id="photoContainer">
-            <span style="color: #999;">FOTO</span>
+
+        <div class="main-content">
+            <div class="photo-box" id="photoWrap">
+                <span style="color: #ccc; font-size: 10px;">FOTO</span>
+            </div>
+            
+            <div class="info">
+                <h2 id="outNombre">NOMBRE APELLIDO</h2>
+                <p>DNI: <span id="outDni">00.000.000</span></p>
+                <p>Legajo: <span id="outLegajo">00000</span></p>
+            </div>
+
+            <div class="tag-estudiante">ESTUDIANTE</div>
         </div>
-        <div class="info">
-            <h2 id="dispNombre">NOMBRE APELLIDO</h2>
-            <p>DNI: <span id="dispDni">XXXXXXXX</span></p>
-            <p>Legajo: <span id="dispLegajo">000000</span></p>
-        </div>
-        <div class="footer-tag">Estudiante</div>
     </div>
 
     <script>
-        function updateCard() {
-            document.getElementById('dispNombre').innerText = document.getElementById('inNombre').value.toUpperCase() || "NOMBRE APELLIDO";
-            document.getElementById('dispDni').innerText = document.getElementById('inDni').value || "XXXXXXXX";
-            document.getElementById('dispLegajo').innerText = document.getElementById('inLegajo').value || "000000";
+        function update() {
+            document.getElementById('outNombre').innerText = document.getElementById('inNombre').value || "NOMBRE APELLIDO";
+            document.getElementById('outDni').innerText = document.getElementById('inDni').value || "00.000.000";
+            document.getElementById('outLegajo').innerText = document.getElementById('inLegajo').value || "00000";
         }
 
-        var loadFile = function(event) {
-            var output = document.getElementById('photoContainer');
-            output.innerHTML = `<img src="${URL.createObjectURL(event.target.files[0])}">`;
-        };
+        function loadPhoto(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const img = document.createElement('img');
+                img.src = reader.result;
+                const wrap = document.getElementById('photoWrap');
+                wrap.innerHTML = '';
+                wrap.appendChild(img);
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        async function download() {
+            const card = document.getElementById('credential');
+            // Nota: Para que el logo cargue en el canvas desde GitHub, 
+            // html2canvas necesita permiso. He añadido 'crossorigin' a la imagen.
+            html2canvas(card, {
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: null,
+                scale: 2
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'Credencial-UNPAZ.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
     </script>
 </body>
 </html>
